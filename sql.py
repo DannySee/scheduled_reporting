@@ -1,5 +1,5 @@
 from datetime import  datetime, timedelta, date
-import calendar
+import date_formats as dt
 
 now = date.today()
 today = now.strftime('%Y%m%d')
@@ -24,7 +24,7 @@ updl_dl_violation = (f'''
     INNER JOIN SCDBFP10.PMPZO5L0 AS T2
     ON NHCANO = O5CANO
 
-    WHERE NHEADT = {yesterday}
+    WHERE NHEADT = {dt.sus_format("yesterday")}
     AND NHAGTY = 'UPDL' 
     AND NHPFRB <> 'DL'
     AND NHAGRN = 0   
@@ -55,8 +55,8 @@ inco_overlaps = (f'''
     AND T1.NHCANO > T2.NHCANO 
 
     WHERE (
-        T1.NHEADT BETWEEN {last_week_start} AND {last_week_end} 
-        OR T1.NHMODT BETWEEN {last_week_start} AND {last_week_end} 
+        T1.NHEADT BETWEEN {dt.sus_format("beginning_of_last_week")} AND {last_week_end} 
+        OR T1.NHMODT BETWEEN {dt.sus_format("beginning_of_last_week")} AND {last_week_end} 
     )
     AND T1.NHCAED >= {today}
     AND T2.NHCAED >= {today}

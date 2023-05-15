@@ -4,6 +4,17 @@ import test_database_mail
 import pandas as pd
 import os
 
+cpas_overlaps = {
+        (sql.admin_overlaps, f'Overlapping_Admin_Agreements {sql.now}'): [],
+        (sql.drop_overlaps, f'Overlapping_Drop_Size_Agreements {sql.now}'): [],
+        #(sql.prompt_overlaps, f'overlapping Prompt Pay Agreements {sql.now}'): [],
+        (sql.volume_overlaps, f'Overlapping_Volume_Agreements {sql.now}'): [],
+        (sql.inco_overlaps, f'Overlapping_Intercompany_Agreements {sql.now}'): [],
+        #(sql.edfs_overlaps,  f'overlapping Fuel Surcharge Agreements {sql.now}'): [],
+        (sql.licg_overlaps, f'Overlapping_Upcharge_Agreements {sql.now}'): [],
+        (sql.charge_overlaps, f'Overlapping_Surcharge_Agreements {sql.now}'): []
+    }
+
 def updl_validation():
 
     sites = data_centers.all_sites
@@ -48,16 +59,7 @@ def updl_validation():
 def overlaps():
 
     sites = data_centers.all_sites
-    cpas_overlaps = {
-        (sql.admin_overlaps, f'Overlapping_Admin_Agreements {sql.now}'): [],
-        (sql.drop_overlaps, f'Overlapping_Drop_Size_Agreements {sql.now}'): [],
-        #(sql.prompt_overlaps, f'overlapping Prompt Pay Agreements {sql.now}'): [],
-        (sql.volume_overlaps, f'Overlapping_Volume_Agreements {sql.now}'): [],
-        (sql.inco_overlaps, f'Overlapping_Intercompany_Agreements {sql.now}'): [],
-        #(sql.edfs_overlaps,  f'overlapping Fuel Surcharge Agreements {sql.now}'): [],
-        (sql.licg_overlaps, f'Overlapping_Upcharge_Agreements {sql.now}'): [],
-        (sql.charge_overlaps, f'Overlapping_Surcharge_Agreements {sql.now}'): []
-    }
+    
 
     for site in sites:
 
