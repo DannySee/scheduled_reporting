@@ -1,20 +1,93 @@
 
 import sql
-import test_database_mail
-import pandas as pd
-import os
+import date_formats as dt
 
-cpas_overlaps = {
-        (sql.admin_overlaps, f'Overlapping_Admin_Agreements {sql.now}'): [],
-        (sql.drop_overlaps, f'Overlapping_Drop_Size_Agreements {sql.now}'): [],
-        #(sql.prompt_overlaps, f'overlapping Prompt Pay Agreements {sql.now}'): [],
-        (sql.volume_overlaps, f'Overlapping_Volume_Agreements {sql.now}'): [],
-        (sql.inco_overlaps, f'Overlapping_Intercompany_Agreements {sql.now}'): [],
-        #(sql.edfs_overlaps,  f'overlapping Fuel Surcharge Agreements {sql.now}'): [],
-        (sql.licg_overlaps, f'Overlapping_Upcharge_Agreements {sql.now}'): [],
-        (sql.charge_overlaps, f'Overlapping_Surcharge_Agreements {sql.now}'): []
-    }
+admin_overlaps = {
+    'sql': sql.admin_overlaps, 
+    'filename': f'Overlapping_Admin_Agreements_{dt.pretty("today")}',
+    'data': [], 
+    'headers': '',
+    'mail_to': 'daniel.clark@sysco.com',
+    'mail_subject': f'(CI) Overlapping Admin Agreements: Week of {dt.pretty("beginning_of_last_week")}',
+    'mail_body': f'Customer Incentives: Overlapping Admin Agreements {dt.pretty("beginning_of_last_week")} to {dt.pretty("end_of_last_week")}.'
+} 
 
+drop_overlaps = {
+    'sql': sql.drop_overlaps, 
+    'filename': f'Overlapping_Drop_Size_Agreements_{dt.pretty("today")}',
+    'data': [], 
+    'headers': '',
+    'mail_to': 'daniel.clark@sysco.com',
+    'mail_subject': f'(CI) Overlapping Drop Size Agreements: Week of {dt.pretty("beginning_of_last_week")}',
+    'mail_body': f'Customer Incentives: Overlapping Drop Size Agreements {dt.pretty("beginning_of_last_week")} to {dt.pretty("end_of_last_week")}.'
+}
+
+prompt_overlaps = {
+    'sql': sql.prompt_overlaps, 
+    'filename': f'Overlapping_Prompt_Pay_Agreements_{dt.pretty("today")}',
+    'data': [], 
+    'headers': '',
+    'mail_to': 'daniel.clark@sysco.com',
+    'mail_subject': f'(CI) Overlapping Prompt Pay Agreements: Week of {dt.pretty("beginning_of_last_week")}',
+    'mail_body': f'Customer Incentives: Overlapping Prompt Pay Agreements {dt.pretty("beginning_of_last_week")} to {dt.pretty("end_of_last_week")}.'
+}
+
+volume_overlaps  = {
+    'sql': sql.volume_overlaps, 
+    'filename': f'Overlapping_Volume_Agreements_{dt.pretty("today")}',
+    'data': [], 
+    'headers': '',
+    'mail_to': 'daniel.clark@sysco.com',
+    'mail_subject': f'(CI) Overlapping Volume Agreements: Week of {dt.pretty("beginning_of_last_week")}',
+    'mail_body': f'Customer Incentives: Overlapping Volume Agreements {dt.pretty("beginning_of_last_week")} to {dt.pretty("end_of_last_week")}.'
+}
+
+inco_overlaps = {
+    'sql': sql.inco_overlaps, 
+    'filename': f'Overlapping_Intercompany_Agreements_{dt.pretty("today")}',
+    'data': [], 
+    'headers': '',
+    'mail_to': 'daniel.clark@sysco.com',
+    'mail_subject': f'(CI) Overlapping INCO Agreements: Week of {dt.pretty("beginning_of_last_week")}',
+    'mail_body': f'Customer Incentives: Overlapping INCO Agreements {dt.pretty("beginning_of_last_week")} to {dt.pretty("end_of_last_week")}.'
+}
+
+edfs_overlaps = {
+    'sql': sql.edfs_overlaps, 
+    'filename': f'overlapping_Fuel_Surcharge_Agreements_{dt.pretty("today")}',
+    'data': [], 
+    'headers': '',
+    'mail_to': 'daniel.clark@sysco.com',
+    'mail_subject': f'(CI) Overlapping Fule Surcharge Agreements: Week of {dt.pretty("beginning_of_last_week")}',
+    'mail_body': f'Customer Incentives: Overlapping Fuel Surcharge Agreements {dt.pretty("beginning_of_last_week")} to {dt.pretty("end_of_last_week")}.'
+}
+
+licg_overlaps = {
+    'sql': sql.licg_overlaps, 
+    'filename': f'Overlapping_Upcharge_Agreements_{dt.pretty("today")}',
+    'data': [], 
+    'headers': '',
+    'mail_to': 'daniel.clark@sysco.com',
+    'mail_subject': f'(CI) Overlapping LICG Agreements: Week of {dt.pretty("beginning_of_last_week")}',
+    'mail_body': f'Customer Incentives: Overlapping LICG Agreements {dt.pretty("beginning_of_last_week")} to {dt.pretty("end_of_last_week")}.'
+}
+
+charge_overlaps = {
+    'sql': sql.charge_overlaps, 
+    'filename': f'Overlapping_Surcharge_Agreements_{dt.pretty("today")}',
+    'data': [], 
+    'headers': '',
+    'mail_to': 'daniel.clark@sysco.com',
+    'mail_subject': f'(CI) Overlapping Charge/Surcharge Agreements: Week of {dt.pretty("beginning_of_last_week")}',
+    'mail_body': f'Customer Incentives: Overlapping Charge/Surcharge Agreements {dt.pretty("beginning_of_last_week")} to {dt.pretty("end_of_last_week")}.'
+}
+
+ci_overlaps = [admin_overlaps, drop_overlaps, volume_overlaps, inco_overlaps, licg_overlaps, charge_overlaps]
+       
+        
+        
+
+'''
 def updl_validation():
 
     sites = data_centers.all_sites
@@ -51,7 +124,7 @@ def updl_validation():
         subject = "UPDL Agreement Rebate Basis Violation"
         body = f"Good afternoon,\n\nThe attached UPDL agreements are setup with a rebate basis other than DL. Please review and take the appropriate action.\n\n\nThanks,\nQA Pricing & Agreements"    
 
-        test_database_mail.send_message(filepath)
+        database_mail.send_message(filepath)
 
         os.remove(filepath)
 
@@ -102,7 +175,7 @@ def overlaps():
 
         i = i + 1 
 
-        test_database_mail.send_message(filename)
+        database_mail.send_message(filename)
 
         os.remove(filename)
 
@@ -139,7 +212,8 @@ def expiring_deals():
         subject = "UPDL Agreement Rebate Basis Violation"
         body = f"Good afternoon,\n\nThe attached UPDL agreements are setup with a rebate basis other than DL. Please review and take the appropriate action.\n\n\nThanks,\nQA Pricing & Agreements"    
 
-        test_database_mail.send_message(filename)
+        database_mail.send_message(filename)
 
-        os.remove(filename)
+        
 
+'''

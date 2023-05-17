@@ -1,38 +1,53 @@
-import data_centers
+import os
+import data_centers as cnn
+
+from excel import create_file
+from database_mail import send_message
 
 
-def pull_usbl():
+def pull_usbl(reports):
 
-    sites = data_centers.all_sites
-    usbl_results = []
-
+    sites = cnn.all_sites
+    #sites = ['058']
+ 
     for site in sites:
         try:
-            sus = data_centers.sus(site)
+            sus = cnn.sus(site)
             cur = sus.cursor()
-            cur.execute(sql.expiring_deals)
-            site_results = cur.fetchall()
 
-            headers = [desc[0] for desc in cur.description]
-            usbl_results.extend([list(map(str, row)) for row in site_results])
+            for report in reports:
+
+                # insert market details if applicable
+                query = report['sql'].replace('*MARKET*', cnn.site_markets[site])
+
+                # fetch data from system
+                cur.execute(query)
+                query_results = cur.fetchall()
+
+                # extend data site for query/site
+                report['data'].extend([list(map(str, row)) for row in query_results])
+
+                # setup the headers for each report
+                report['headers'] = [desc[0] for desc in cur.description]
                 
             sus.close()
-            print(f'Expiring: {site}')
+            print(f'(USBL) Data Pull Complete: {site}')
+
         except Exception as e:
-            print(f'Cannot connect to site ({site})\n{e}')
+            print(f'(USBL) Cannot connect to site ({site})\n{e}')
 
-    if len(usbl_results) > 0:
+    for report in reports:
 
-        filename = f'C:\\Temp\\outgoing_mail\\CPAS Expiring Deals Report {sql.now}.xlsx'
+        filename = f"C:\\Temp\\outgoing_mail\\{report['filename']}.xlsx"
+        headers = report['headers']
+        content = report['data']
+        mail_to = report['mail_to']
+        mail_subject = report['mail_subject']
+        mail_body = f'{report["mail_body"]}\n\nRecord count: {len(report["data"])}'
 
-        df = pd.DataFrame(usbl_results, columns=headers)
-        with pd.ExcelWriter(filename) as writer:
-            df.to_excel(writer, sheet_name='sheet1', index=False)
+        create_file(filename, headers, content)
 
-        to = "corporatecustomerrebates@sbs.sysco.com"
-        subject = "UPDL Agreement Rebate Basis Violation"
-        body = f"Good afternoon,\n\nThe attached UPDL agreements are setup with a rebate basis other than DL. Please review and take the appropriate action.\n\n\nThanks,\nQA Pricing & Agreements"    
-
-        test_database_mail.send_message(filename)
+        send_message(mail_to, mail_subject, mail_body, filename)
 
         os.remove(filename)
+

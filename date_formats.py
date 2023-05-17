@@ -3,7 +3,7 @@ from datetime import  datetime, timedelta, date
 now = date.today()
 
 
-def sus_format(day):
+def sus(day):
     if day == 'today':
         return now.strftime('%Y%m%d')
     elif day == 'yesterday':
@@ -20,8 +20,7 @@ def sus_format(day):
     else:
         return 'format not supported'
 
-
-def pretty_format(day):
+def pretty(day):
     if day == 'today':
         return now.strftime("%m-%d-%Y")
     elif day == 'yesterday':
@@ -35,6 +34,9 @@ def pretty_format(day):
     elif day == 'end_of_month':
         next_month = now.replace(day=28) + timedelta(days=4)
         return (next_month - timedelta(days=next_month.day)).strftime("%m-%d-%Y")
+    elif day == 'month_back':
+        return (now - timedelta(30)).strftime("%m/%d/%Y")
     else:
         return 'format not supported'
+
 
