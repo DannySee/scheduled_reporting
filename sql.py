@@ -13,7 +13,7 @@ timestamp = dt.pretty('today')
 # Customer Incentives Queries
 ############################################################################################
 
-updl_dl_violation = (f'''
+updl_violation = (f'''
     SELECT
     TRIM(NHARCO) AS SITE,
     NHCANO AS CA,
@@ -135,7 +135,7 @@ prompt_overlaps = ''
 edfs_overlaps = ''
 
 ############################################################################################
-# Server tasks
+# Server jobs
 ############################################################################################
 
 cal_backup = (f'''

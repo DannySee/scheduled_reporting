@@ -82,138 +82,26 @@ charge_overlaps = {
     'mail_body': f'Customer Incentives: Overlapping Charge/Surcharge Agreements {dt.pretty("beginning_of_last_week")} to {dt.pretty("end_of_last_week")}.'
 }
 
-ci_overlaps = [admin_overlaps, drop_overlaps, volume_overlaps, inco_overlaps, licg_overlaps, charge_overlaps]
-       
-        
-        
+updl_violation = {
+    'sql': sql.updl_violation, 
+    'filename': f'UPDL_DL_Violation_{dt.pretty("today")}',
+    'data': [], 
+    'headers': '', 
+    'mail_to': 'daniel.clark@sysco.com',
+    'mail_subject': f'UPDL Agreement Rebate Basis Violation {dt.pretty("today")}',
+    'mail_body': f"Hello,\n\nThe attached UPDL agreement(s) are setup with a rebate basis other than DL. Please review and take the appropriate action.\n\n\nThanks,\nQA Pricing & Agreements"  
+}
 
-'''
-def updl_validation():
+expiring_deals = {
+    'sql': sql.expiring_deals, 
+    'filename': f'Expiring_CI_Agreements_{dt.pretty("today")}',
+    'data': [], 
+    'headers': '', 
+    'mail_to': 'daniel.clark@sysco.com',
+    'mail_subject': f'Expiring Performance Agreements {dt.pretty("today")}',
+    'mail_body': f"Hello,\n\nThe attached performance are set to expire this month.\n\n\nThanks,\nQA Pricing & Agreements"  
+}
 
-    sites = data_centers.all_sites
-    violations = []
+overlaps = [admin_overlaps, drop_overlaps, volume_overlaps, inco_overlaps, licg_overlaps, charge_overlaps]
 
-    for site in sites:
-        sus = data_centers.sus(site)
-        query = sus.execute(sql.updl_dl_violation).fetchall()
-
-        for row in query:
-            rowList = [
-                str(row.SITE),
-                str(row.CA) ,
-                str(row.DESCRIPTION) ,
-                str(row.START_DT),
-                str(row.END_DT)
-            ]
-            violations.append(rowList)
-            
-        print(f'UPDL {site}')
-        sus.close()
-
-    if len(violations) > 0:
-
-        filename = 'UPDL Rebate Basis Violation.xlsx'
-
-        df = pd.DataFrame(violations, columns=["SITE", "CA", "DESCRIPTION", "START", "END"])
-        with pd.ExcelWriter(filename) as writer:
-            df.to_excel(writer, sheet_name='Sheet1', index=False)
-
-        filepath = os.getcwd() + f'\{filename}'
-
-        to = "corporatecustomerrebates@sbs.sysco.com"
-        subject = "UPDL Agreement Rebate Basis Violation"
-        body = f"Good afternoon,\n\nThe attached UPDL agreements are setup with a rebate basis other than DL. Please review and take the appropriate action.\n\n\nThanks,\nQA Pricing & Agreements"    
-
-        database_mail.send_message(filepath)
-
-        os.remove(filepath)
-
-
-def overlaps():
-
-    sites = data_centers.all_sites
-    
-
-    for site in sites:
-
-        try:
-            sus = data_centers.sus(site)
-            print(site)
-
-            for query in cpas_overlaps:
-
-                print('new type')
-
-                query_results = sus.execute(query[0]).fetchall()
-
-                for row in query_results:
-                    rows = [
-                        row.SITE, 
-                        row.PRNT_LEAD_CA,
-                        row.PRNT_LOCAL_CA, 
-                        row.PRNT_DESCRIPTION,
-                        row.PRNT_START, 
-                        row.PRNT_END,
-                        row.CHLD_LEAD_CA, 
-                        row.CHLD_LOCAL_CA,
-                        row.CHLD_DESCRIPTION, 
-                        row.CHLD_START, 
-                        row.CHLD_END
-                    ]
-                    cpas_overlaps[query].append(rows)
-        except:
-            print(f'could not gain access to site ({site}).')
-
-    i = 1
-    for report in cpas_overlaps:
-
-        filename = f'C:\\Temp\\outgoing_mail\\{report[1]}.xlsx'
-
-        df = pd.DataFrame(cpas_overlaps[report], columns=["SITE", "LEAD CA", "LOCAL CA","DESCRIPTION","START","END","LEAD CA", "LOCAL CA","DESCRIPTION","START","END"])
-        with pd.ExcelWriter(filename) as writer:
-            df.to_excel(writer, sheet_name=sql.today, index=False)
-
-        i = i + 1 
-
-        database_mail.send_message(filename)
-
-        os.remove(filename)
-
-
-def expiring_deals():
-
-    sites = data_centers.all_sites
-    usbl_results = []
-
-    for site in sites:
-        try:
-            sus = data_centers.sus(site)
-            cur = sus.cursor()
-            cur.execute(sql.expiring_deals)
-            site_results = cur.fetchall()
-
-            headers = [desc[0] for desc in cur.description]
-            usbl_results.extend([list(map(str, row)) for row in site_results])
-                
-            sus.close()
-            print(f'Expiring: {site}')
-        except Exception as e:
-            print(f'Cannot connect to site ({site})\n{e}')
-
-    if len(usbl_results) > 0:
-
-        filename = f'C:\\Temp\\outgoing_mail\\CPAS Expiring Deals Report {sql.now}.xlsx'
-
-        df = pd.DataFrame(usbl_results, columns=headers)
-        with pd.ExcelWriter(filename) as writer:
-            df.to_excel(writer, sheet_name='sheet1', index=False)
-
-        to = "corporatecustomerrebates@sbs.sysco.com"
-        subject = "UPDL Agreement Rebate Basis Violation"
-        body = f"Good afternoon,\n\nThe attached UPDL agreements are setup with a rebate basis other than DL. Please review and take the appropriate action.\n\n\nThanks,\nQA Pricing & Agreements"    
-
-        database_mail.send_message(filename)
-
-        
-
-'''
+all_reports = [admin_overlaps, drop_overlaps, volume_overlaps, inco_overlaps, licg_overlaps, charge_overlaps, updl_violation, expiring_deals]
