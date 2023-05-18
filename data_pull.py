@@ -3,6 +3,7 @@ import data_centers as cnn
 
 from excel import create_file
 from database_mail import send_message
+from deviated_agreements import upload_foodbuy_overlaps
 
 
 def pull_usbl(reports):
@@ -19,7 +20,7 @@ def pull_usbl(reports):
 
                 if 'custom_job' in report:
 
-                    report['custom_job'](sus)
+                    report['custom_job']['import'](sus)
             
                 else:
 
@@ -51,7 +52,10 @@ def pull_usbl(reports):
         mail_subject = report['mail_subject']
         mail_body = f'{report["mail_body"]}\n\nRecord count: {len(report["data"])}'
 
-        create_file(filename, headers, content)
+        if 'custom_job' in report:
+            report['custom_job']['export']
+        else:
+            create_file(filename, headers, content)
 
         send_message(mail_to, mail_subject, mail_body, filename)
 

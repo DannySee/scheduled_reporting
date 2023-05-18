@@ -4,7 +4,7 @@ import sql
 from data_centers import sql_server
 
 
-def upload_foodbuy_overlaps(cnn_sus):
+def import_foodbuy_overlaps(cnn_sus):
 
     cnn_server = sql_server()
 
@@ -26,8 +26,13 @@ def upload_foodbuy_overlaps(cnn_sus):
     cnn_server.close()
 
 
+def export_foodbuy_overlaps(filename):
+
+    return
+
+
 foodbuy_overlaps = {
-    'custom_job': upload_foodbuy_overlaps, 
+    'custom_job': {'import': import_foodbuy_overlaps, 'export': export_foodbuy_overlaps},
     'filename': f'Foodbuy_Overlapping_Deals_{dt.pretty("today")}',
     'data': [], 
     'headers': '',
@@ -35,3 +40,5 @@ foodbuy_overlaps = {
     'mail_subject': f'Foodbuy Overlapping Deals Report: Week of {dt.pretty("beginning_of_last_week")}',
     'mail_body': f'Customer Incentives: Overlapping Admin Agreements {dt.pretty("beginning_of_last_week")} to {dt.pretty("end_of_last_week")}.'
 } 
+
+
