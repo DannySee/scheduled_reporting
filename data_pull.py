@@ -8,7 +8,7 @@ from database_mail import send_message
 def pull_usbl(reports):
 
     sites = cnn.all_sites
-    #sites = ['058']
+    #sites = ['058']s
  
     for site in sites:
         try:
@@ -17,18 +17,24 @@ def pull_usbl(reports):
 
             for report in reports:
 
-                # insert market details if applicable
-                query = report['sql'].replace('*MARKET*', cnn.site_markets[site])
+                if 'custom_job' in report:
 
-                # fetch data from system
-                cur.execute(query)
-                query_results = cur.fetchall()
+                    report['custom_job'](sus)
+            
+                else:
 
-                # extend data site for query/site
-                report['data'].extend([list(map(str, row)) for row in query_results])
+                    # insert market details if applicable
+                    query = report['sql'].replace('*MARKET*', cnn.site_markets[site])
 
-                # setup the headers for each report
-                report['headers'] = [desc[0] for desc in cur.description]
+                    # fetch data from system
+                    cur.execute(query)
+                    query_results = cur.fetchall()
+
+                    # extend data site for query/site
+                    report['data'].extend([list(map(str, row)) for row in query_results])
+
+                    # setup the headers for each report
+                    report['headers'] = [desc[0] for desc in cur.description]
                 
             sus.close()
             print(f'(USBL) Data Pull Complete: {site}')

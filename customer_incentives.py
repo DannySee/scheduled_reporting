@@ -1,6 +1,10 @@
 
-import sql
 import date_formats as dt
+import sql
+
+############################################################################################
+# Weekly Overlapping Agreements Reports
+############################################################################################
 
 admin_overlaps = {
     'sql': sql.admin_overlaps, 
@@ -82,6 +86,10 @@ charge_overlaps = {
     'mail_body': f'Customer Incentives: Overlapping Charge/Surcharge Agreements {dt.pretty("beginning_of_last_week")} to {dt.pretty("end_of_last_week")}.'
 }
 
+############################################################################################
+# Dailiy UPDL Validation Report
+############################################################################################
+
 updl_violation = {
     'sql': sql.updl_violation, 
     'filename': f'UPDL_DL_Violation_{dt.pretty("today")}',
@@ -91,6 +99,10 @@ updl_violation = {
     'mail_subject': f'UPDL Agreement Rebate Basis Violation {dt.pretty("today")}',
     'mail_body': f"Hello,\n\nThe attached UPDL agreement(s) are setup with a rebate basis other than DL. Please review and take the appropriate action.\n\n\nThanks,\nQA Pricing & Agreements"  
 }
+
+############################################################################################
+# Monthly Expiring Deals Report
+############################################################################################
 
 expiring_deals = {
     'sql': sql.expiring_deals, 
@@ -102,6 +114,9 @@ expiring_deals = {
     'mail_body': f"Hello,\n\nThe attached performance are set to expire this month.\n\n\nThanks,\nQA Pricing & Agreements"  
 }
 
-overlaps = [admin_overlaps, drop_overlaps, volume_overlaps, inco_overlaps, licg_overlaps, charge_overlaps]
+############################################################################################
+# Reporting Clusters
+############################################################################################
 
+overlaps = [admin_overlaps, drop_overlaps, volume_overlaps, inco_overlaps, licg_overlaps, charge_overlaps]
 all_reports = [admin_overlaps, drop_overlaps, volume_overlaps, inco_overlaps, licg_overlaps, charge_overlaps, updl_violation, expiring_deals]

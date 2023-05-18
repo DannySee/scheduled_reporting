@@ -36,7 +36,7 @@ def pretty(day):
         return (next_month - timedelta(days=next_month.day)).strftime("%m-%d-%Y")
     elif day == 'month_back':
         return (now - timedelta(30)).strftime("%m/%d/%Y")
+    elif day == 'week_back':
+        return (now - timedelta(7)).strftime("%m/%d/%Y")
     else:
         return 'format not supported'
-
-
