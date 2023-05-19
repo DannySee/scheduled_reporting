@@ -3,7 +3,7 @@ import server_jobs
 import customer_incentives as ci
 import deviated_agreements as dpm
 
-from data_pull import pull_usbl
+from data_pull import pull_usbl, pull_dpm
 
 '''
 if __name__ == "__main__":
@@ -28,4 +28,6 @@ if __name__ == "__main__":
 '''
 
 pull_usbl([dpm.foodbuy_overlaps])
+
+#pull_dpm([dpm.rebate_basis_validatoin])
     

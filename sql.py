@@ -867,14 +867,59 @@ WHERE PRIMARY_KEY NOT IN (
 	ITEM
 )
 
-COMMIT
-"""
+COMMIT"""
+
+############################################################################################
+# Daily rebate basis validation
+############################################################################################
+
+rebate_basis_validation = (f"""
+    SELECT
+    M7VAGN AS VA, 
+    M7ACAN AS CA, 
+    TRIM(M7VAGD) AS DESCRIPTION, 
+    M7AGTY AS TYPE, 
+    M7VASD AS EFFECTIVE_DT, 
+    M7VAED AS END_DT, 
+    TRIM(QBITEM) AS ITEM, 
+    JFLCCT AS CATEGORY, 
+    TRIM(JFITDS) AS ITEM_DESCRIPTION,
+    TRIM(QBXVBS) AS REBATE_BASIS, 
+    TRIM(QBXVRB) AS REBATE_AMOUNT,
+    TRIM(QBXVAV) AS APPROP_AMOUNT,
+    TRIM(M7EAID) AS CREATE_ID
+
+    FROM SCDBFP10.PMVHM7PF
+
+    LEFT JOIN SCDBFP10.PMPZQBPF
+    ON M7VAGN = QBVAGN
+
+    INNER JOIN SCDBFP10.USIAJFPF
+    ON QBITEM = JFITEM
+
+    WHERE M7EADT = 20230519
+    AND (
+        (
+            TRIM(QBXVBS) = 'CC' 
+            AND QBXVRB < 10 
+            AND QBXVRB <> 0.0100
+        ) 
+        OR (
+            TRIM(QBXVBS) = 'CP' 
+            AND QBXVRB > 10
+        )
+    ) 
+    AND NOT (
+        M7APNM LIKE '%DPMEI%' 
+        AND M7AGTY = 'SFVA'
+    )
+""")
 
 ############################################################################################
 # Server jobs
 ############################################################################################
 
-cal_backup = (f'''
+cal_backup = (f"""
     BEGIN TRANSACTION 
 
     DELETE FROM CAL_Account_Assignments_BACKUP WHERE TIMESTAMP < '{last_month}'
@@ -956,4 +1001,4 @@ cal_backup = (f'''
     FROM CAL_Account_Assignments
 
     COMMIT
-''')
+""")

@@ -5,6 +5,11 @@ import warnings
 
 from data_centers import sql_server
 
+today = dt.pretty("today")
+
+############################################################################################
+# Foodbuy Overlap Reports
+############################################################################################
 
 def import_foodbuy_overlaps(cnn_sus):
 
@@ -51,10 +56,9 @@ def export_foodbuy_overlaps(filename):
     cnn_server.close()
 
 
-
 foodbuy_overlaps = {
     'custom_job': {'import': import_foodbuy_overlaps, 'export': export_foodbuy_overlaps},
-    'filename': f'Foodbuy_Overlapping_Deals_{dt.pretty("today")}',
+    'filename': f'Foodbuy_Overlapping_Deals_{today}',
     'data': [], 
     'headers': '',
     'mail_to': 'daniel.clark@sysco.com',
@@ -62,4 +66,16 @@ foodbuy_overlaps = {
     'mail_body': f'Overlapping Foodbuy Agreements {dt.pretty("beginning_of_last_week")} to {dt.pretty("end_of_last_week")}.'
 } 
 
+############################################################################################
+# Daily rebate basis validation
+############################################################################################
 
+rebate_basis_validatoin = {
+    'sql': sql.rebate_basis_validation, 
+    'filename': f'Rebate_Basis_Validation_{today}',
+    'data': [], 
+    'headers': '',
+    'mail_to': 'daniel.clark@sysco.com',
+    'mail_subject': f'Daily Rebate Basis Validation {today}',
+    'mail_body': f'Deviated Agreements: Daily Rebate Basis Violation {today}.'
+} 

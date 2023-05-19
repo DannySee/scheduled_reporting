@@ -181,7 +181,8 @@ def sus(site):
     cnn_sus = pyodbc.connect(
         driver='{iSeries Access ODBC Driver}',
         system=f'AS{site}ATO.na.sysco.net',
-        SIGNON=4,
+        UID='MUDAC000',
+        PWD='ZXCVBN4567',
         TRANSLATE=1,
         TRANSLATE_BINARY=True)
 
@@ -195,3 +196,4 @@ def sql_server():
         database='Pricing_Agreements')
     
     return server
+
