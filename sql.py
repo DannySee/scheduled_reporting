@@ -138,7 +138,7 @@ edfs_overlaps = ''
 # Foodbuy Overlapping Agreements
 ############################################################################################
 
-overlap_header_sus = (f"""
+foodbuy_overlap_header_sus = (f"""
 SELECT
 'VA',
 CAST(FBUY_VA AS VARCHAR(11)),
@@ -357,7 +357,7 @@ DIRECT_VA
 LIMIT 1000
 """)
 
-overlap_item_sus = (f"""
+foodbuy_overlap_item_sus = (f"""
 SELECT
 'VA',
 CAST(FBUY_VA AS VARCHAR(11)),
@@ -560,7 +560,7 @@ SUPC
 LIMIT 1000
 """)
 
-overlap_customer_sus = (f"""
+foodbuy_overlap_customer_sus = (f"""
 SELECT
 TRIM(FOODBUY.M7ARCO) AS SITE,
 TRIM(LEFT(REFDAT, LOCATE('YN', REFDAT)-1)) AS SITE_NAME,
@@ -769,7 +769,7 @@ SHIP_TO
 LIMIT 1000
 """)
 
-overlap_header_server = F"""
+foodbuy_overlap_header_server = F"""
 SELECT DISTINCT
 OVERLAP_TYPE AS [TYPE],
 '' AS [TERM SET CODE], 
@@ -789,7 +789,7 @@ FROM Foodbuy_Overlap_Header
 WHERE TIMESTAMP = '{timestamp}'
 """
 
-overlap_item_server = f"""
+foodbuy_overlap_item_server = f"""
 SELECT DISTINCT
 OVERLAP_TYPE AS [TYPE],
 '' AS [TERM SET CODE], 
@@ -810,7 +810,7 @@ FROM Foodbuy_Overlap_Item
 WHERE TIMESTAMP = '{timestamp}'
 """
 
-overlap_customer_server = f"""
+foodbuy_overlap_customer_server = f"""
 SELECT 
 SITE_NBR AS [SITE],
 SITE_NAME AS [SITE NAME],
@@ -833,7 +833,7 @@ FROM Foodbuy_Overlap_Customer
 WHERE TIMESTAMP = '{timestamp}'
 """
 
-server_cleanup = """
+foodbuy_server_cleanup = """
 BEGIN TRANSACTION 
 
 DELETE 

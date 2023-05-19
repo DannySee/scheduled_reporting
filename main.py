@@ -1,10 +1,11 @@
 import date_formats as dt
 import server_jobs
 import customer_incentives as ci
+import deviated_agreements as dpm
 
 from data_pull import pull_usbl
 
-
+'''
 if __name__ == "__main__":
 
     # daily jobs
@@ -16,6 +17,7 @@ if __name__ == "__main__":
     # weekly reporting
     if dt.now.weekday() == 0:
         sus_reporting.extend(ci.overlaps)
+        sus_reporting.append(dpm.foodbuy_overlaps)
 
     # monthly reporting
     if dt.now.day() == 1:
@@ -23,4 +25,7 @@ if __name__ == "__main__":
 
     # run reporting accross usbl
     pull_usbl(sus_reporting)
+'''
+
+pull_usbl([dpm.foodbuy_overlaps])
     
