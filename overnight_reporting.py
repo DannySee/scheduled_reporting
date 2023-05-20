@@ -3,9 +3,10 @@ import server_jobs
 import customer_incentives as ci
 import deviated_agreements as dpm
 
-from data_pull import pull_usbl, pull_dpm
+from data_pull import pull_usbl
+from data_centers import all_sites
 
-'''
+
 if __name__ == "__main__":
 
     # daily jobs
@@ -24,10 +25,4 @@ if __name__ == "__main__":
         sus_reporting.append(ci.expiring_deals)
 
     # run reporting accross usbl
-    pull_usbl(sus_reporting)
-'''
-
-pull_usbl([dpm.foodbuy_overlaps])
-
-#pull_dpm([dpm.rebate_basis_validatoin])
-    
+    pull_usbl(sus_reporting, all_sites)

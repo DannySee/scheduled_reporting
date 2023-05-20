@@ -8,4 +8,3 @@ def cal_backup():
     sql_server.execute(sql.cal_backup)
     sql_server.commit()
     sql_server.close()
-

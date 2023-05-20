@@ -29,11 +29,7 @@ def deliver_report(reports):
         os.remove(filename)
 
 
-def pull_usbl(reports):
-
-    sites = cnn.all_sites
-    sites = ['288','293','306','320','332','344','429','450']
-   
+def pull_usbl(reports, sites):
  
     for site in sites:
         try:
@@ -66,37 +62,5 @@ def pull_usbl(reports):
 
         except Exception as e:
             print(f'(USBL) Cannot connect to site ({site})\n{e}')
-
-    deliver_report(reports)
-
-
-def pull_dpm(reports):
-
-    try:
-        sus = cnn.sus(240)
-        cur = sus.cursor()
-
-        for report in reports:
-
-            if 'custom_job' in report:
-
-                report['custom_job']['import'](sus)
-        
-            else:
-
-                # fetch data from system
-                cur.execute(report['sql'])
-                query_results = cur.fetchall()
-
-                # extend data site for query/site
-                report['data'].extend([list(map(str, row)) for row in query_results])
-
-                # setup the headers for each report
-                report['headers'] = [desc[0] for desc in cur.description]
-            
-        sus.close()
-
-    except Exception as e:
-        print(f'(USBL) Cannot connect to 240a\n{e}')
 
     deliver_report(reports)
