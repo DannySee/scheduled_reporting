@@ -148,6 +148,7 @@ site_markets = {
     '164': 'SOUTH',
     '194': 'NORTH',
     '195': 'NORTH',
+    '240': 'CORP',
     '288': 'SOUTH',
     '293': 'SOUTH',
     '306': 'NORTH',
@@ -196,4 +197,3 @@ def sql_server():
         database='Pricing_Agreements')
     
     return server
-

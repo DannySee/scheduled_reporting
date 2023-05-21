@@ -29,7 +29,7 @@ def deliver_report(reports):
         os.remove(filename)
 
 
-def pull_usbl(reports, sites):
+def sus_reporting(reports, sites):
  
     for site in sites:
         try:
@@ -61,9 +61,9 @@ def pull_usbl(reports, sites):
                     print(report['filename'])
                 
             sus.close()
-            print(f'(USBL) Data Pull Complete: {site}')
+            print(f'Data Pull Complete: {site}\n')
 
         except Exception as e:
-            print(f'(USBL) Cannot connect to site ({site})\n{e}')
+            print(f'Cannot connect to site ({site})\n{e}\n')
 
     deliver_report(reports)

@@ -12,8 +12,8 @@ admin_overlaps = {
     'data': [], 
     'headers': '',
     'mail_to': 'daniel.clark@sysco.com',
-    'mail_subject': f'(CI) Overlapping Admin Agreements: Week of {dt.pretty("beginning_of_last_week")}',
-    'mail_body': f'Customer Incentives & Rebates:\n\nOverlapping Admin Agreements {dt.pretty("beginning_of_last_week")} to {dt.pretty("end_of_last_week")}.'
+    'mail_subject': f'(CIR) Overlapping Admin Agreements: Week of {dt.pretty("beginning_of_last_week")}',
+    'mail_body': f'Customer Incentives & Rebates:\nOverlapping Admin Agreements {dt.pretty("beginning_of_last_week")} to {dt.pretty("end_of_last_week")}.'
 } 
 
 drop_overlaps = {
@@ -22,8 +22,8 @@ drop_overlaps = {
     'data': [], 
     'headers': '',
     'mail_to': 'daniel.clark@sysco.com',
-    'mail_subject': f'(CI) Overlapping Drop Size Agreements: Week of {dt.pretty("beginning_of_last_week")}',
-    'mail_body': f'Customer Incentives & Rebates:\n\nOverlapping Drop Size Agreements {dt.pretty("beginning_of_last_week")} to {dt.pretty("end_of_last_week")}.'
+    'mail_subject': f'(CIR) Overlapping Drop Size Agreements: Week of {dt.pretty("beginning_of_last_week")}',
+    'mail_body': f'Customer Incentives & Rebates:\nOverlapping Drop Size Agreements {dt.pretty("beginning_of_last_week")} to {dt.pretty("end_of_last_week")}.'
 }
 
 prompt_overlaps = {
@@ -32,8 +32,8 @@ prompt_overlaps = {
     'data': [], 
     'headers': '',
     'mail_to': 'daniel.clark@sysco.com',
-    'mail_subject': f'(CI) Overlapping Prompt Pay Agreements: Week of {dt.pretty("beginning_of_last_week")}',
-    'mail_body': f'Customer Incentives & Rebates:\n\nOverlapping Prompt Pay Agreements {dt.pretty("beginning_of_last_week")} to {dt.pretty("end_of_last_week")}.'
+    'mail_subject': f'(CIR) Overlapping Prompt Pay Agreements: Week of {dt.pretty("beginning_of_last_week")}',
+    'mail_body': f'Customer Incentives & Rebates:\nOverlapping Prompt Pay Agreements {dt.pretty("beginning_of_last_week")} to {dt.pretty("end_of_last_week")}.'
 }
 
 volume_overlaps  = {
@@ -42,8 +42,8 @@ volume_overlaps  = {
     'data': [], 
     'headers': '',
     'mail_to': 'daniel.clark@sysco.com',
-    'mail_subject': f'(CI) Overlapping Volume Agreements: Week of {dt.pretty("beginning_of_last_week")}',
-    'mail_body': f'Customer Incentives & Rebates:\n\nOverlapping Volume Agreements {dt.pretty("beginning_of_last_week")} to {dt.pretty("end_of_last_week")}.'
+    'mail_subject': f'(CIR) Overlapping Volume Agreements: Week of {dt.pretty("beginning_of_last_week")}',
+    'mail_body': f'Customer Incentives & Rebates:\nOverlapping Volume Agreements {dt.pretty("beginning_of_last_week")} to {dt.pretty("end_of_last_week")}.'
 }
 
 inco_overlaps = {
@@ -52,8 +52,8 @@ inco_overlaps = {
     'data': [], 
     'headers': '',
     'mail_to': 'daniel.clark@sysco.com',
-    'mail_subject': f'(CI) Overlapping INCO Agreements: Week of {dt.pretty("beginning_of_last_week")}',
-    'mail_body': f'Customer Incentives & Rebates:\n\nOverlapping INCO Agreements {dt.pretty("beginning_of_last_week")} to {dt.pretty("end_of_last_week")}.'
+    'mail_subject': f'(CIR) Overlapping INCO Agreements: Week of {dt.pretty("beginning_of_last_week")}',
+    'mail_body': f'Customer Incentives & Rebates:\nOverlapping INCO Agreements {dt.pretty("beginning_of_last_week")} to {dt.pretty("end_of_last_week")}.'
 }
 
 edfs_overlaps = {
@@ -62,8 +62,8 @@ edfs_overlaps = {
     'data': [], 
     'headers': '',
     'mail_to': 'daniel.clark@sysco.com',
-    'mail_subject': f'(CI) Overlapping Fule Surcharge Agreements: Week of {dt.pretty("beginning_of_last_week")}',
-    'mail_body': f'Customer Incentives & Rebates:\n\nOverlapping Fuel Surcharge Agreements {dt.pretty("beginning_of_last_week")} to {dt.pretty("end_of_last_week")}.'
+    'mail_subject': f'(CIR) Overlapping Fule Surcharge Agreements: Week of {dt.pretty("beginning_of_last_week")}',
+    'mail_body': f'Customer Incentives & Rebates:\nOverlapping Fuel Surcharge Agreements {dt.pretty("beginning_of_last_week")} to {dt.pretty("end_of_last_week")}.'
 }
 
 licg_overlaps = {
@@ -73,7 +73,7 @@ licg_overlaps = {
     'headers': '',
     'mail_to': 'daniel.clark@sysco.com',
     'mail_subject': f'(CIR) Overlapping LICG Agreements: Week of {dt.pretty("beginning_of_last_week")}',
-    'mail_body': f'Customer Incentives & Rebates:\n\nOverlapping LICG Agreements {dt.pretty("beginning_of_last_week")} to {dt.pretty("end_of_last_week")}.'
+    'mail_body': f'Customer Incentives & Rebates:\nOverlapping LICG Agreements {dt.pretty("beginning_of_last_week")} to {dt.pretty("end_of_last_week")}.'
 }
 
 charge_overlaps = {
@@ -83,7 +83,7 @@ charge_overlaps = {
     'headers': '',
     'mail_to': 'daniel.clark@sysco.com',
     'mail_subject': f'(CIR) Overlapping Charge/Surcharge Agreements: Week of {dt.pretty("beginning_of_last_week")}',
-    'mail_body': f'Customer Incentives & Rebates:\n\nOverlapping Charge/Surcharge Agreements {dt.pretty("beginning_of_last_week")} to {dt.pretty("end_of_last_week")}.'
+    'mail_body': f'Customer Incentives & Rebates:\nOverlapping Charge/Surcharge Agreements {dt.pretty("beginning_of_last_week")} to {dt.pretty("end_of_last_week")}.'
 }
 
 ############################################################################################
@@ -97,7 +97,7 @@ updl_violation = {
     'headers': '', 
     'mail_to': 'daniel.clark@sysco.com',
     'mail_subject': f'UPDL Agreement Rebate Basis Violation {dt.pretty("today")}',
-    'mail_body': f"The attached UPDL agreement(s) are setup with a rebate basis other than DL. Please review and take the appropriate action.\n\n\nThanks,\nQA Pricing & Agreements"  
+    'mail_body': f"The attached UPDL agreement(s) are setup with a rebate basis other than DL."  
 }
 
 ############################################################################################
@@ -125,7 +125,7 @@ daily_validation = {
     'headers': '', 
     'mail_to': 'daniel.clark@sysco.com',
     'mail_subject': f'Daily Performance Agreement Validation {dt.pretty("today")}',
-    'mail_body': f'Daily performance agreement validation - agreement(s) created/modified {dt.pretty("yesterday")}.'
+    'mail_body': f'Daily Performance Agreement Validation:\nAgreement(s) created/modified {dt.pretty("yesterday")}.'
 }
 
 ############################################################################################

@@ -78,5 +78,5 @@ rebate_basis_validatoin = {
     'headers': '',
     'mail_to': 'daniel.clark@sysco.com',
     'mail_subject': f'Daily Rebate Basis Validation {today}',
-    'mail_body': f'Deviated Agreements: Daily Rebate Basis Violation {today}.'
+    'mail_body': f'Deviated Agreements:\nDaily Rebate Basis Violation {today}.'
 } 
