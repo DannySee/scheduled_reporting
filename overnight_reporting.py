@@ -13,7 +13,7 @@ if __name__ == "__main__":
     server_jobs.cal_backup
 
     # daily reporting
-    sus_reporting = [ci.updl_violation]
+    sus_reporting = [ci.updl_violation, ci.daily_validation]
 
     # weekly reporting
     if dt.now.weekday() == 0:

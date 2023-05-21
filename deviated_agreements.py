@@ -28,6 +28,7 @@ def import_foodbuy_overlaps(cnn_sus):
             dataset = ','.join(str(row) for row in rows)
             cnn_server.execute(f"INSERT INTO {table} VALUES{dataset}")
 
+        print(table)
                         
     cnn_server.execute(sql.foodbuy_server_cleanup)
     cnn_server.commit()

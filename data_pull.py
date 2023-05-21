@@ -56,6 +56,9 @@ def pull_usbl(reports, sites):
 
                     # setup the headers for each report
                     report['headers'] = [desc[0] for desc in cur.description]
+
+                    # print report code
+                    print(report['filename'])
                 
             sus.close()
             print(f'(USBL) Data Pull Complete: {site}')

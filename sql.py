@@ -13,9 +13,53 @@ timestamp = dt.pretty('today')
 # Customer Incentives Queries
 ############################################################################################
 
+daily_ci_validation = (f'''
+    SELECT
+    NHARCO AS SITE,
+    '*MARKET*' AS MARKET,
+    NHCANO AS CA,
+    TRIM(NHCADC) AS DESCRIPTION,
+    NHAGTY AS CA_TYPE,
+    NHAPTY AS APP_TYPE,
+    NHCASD AS START_DT,
+    NHCAED AS END_DT,
+    NHPFUM AS DROP_UNIT,
+    NHPFDB AS DROP_BASIS,
+    NHPFPD AS PERF_PERIOD,
+    NHPFRB AS REBATE_BASIS,
+    O5PFTR AS IN_DROP_QTY,
+    O5TWKS AS TOTAL_SALES$,
+    O5PFRA AS REBATE_AMT,
+    AZPCIE AS IEA,
+    AZPCSC AS SPEC_CD,
+    TRIM(AZPCSP) AS CUSTOMER_SPEC, 
+    CASE 
+        WHEN NHPFRB = 'PC' AND O5PFRA > 3 THEN 'PC > 3%' 
+        WHEN NHPFRB = 'DC' AND O5PFRA > 5 THEN 'DC > $5'
+        WHEN NHPFRB = 'DP' AND O5PFRA > 0.25 THEN 'DP > $0.25'
+        WHEN NHPFRB = 'DD' AND O5PFRA > 50 THEN 'DD > $50'
+        WHEN O5PFTR < 0.001 THEN 'DROP QTY'
+    END AS STATUS
+
+    FROM SCDBFP10.PMPVNHPF
+
+    INNER JOIN SCDBFP10.PMPZO5L0 AS T2
+    ON NHCANO = O5CANO
+
+    LEFT JOIN SCDBFP10.USCNAZPF
+    ON RIGHT('000000' || NHCANO, 9) = AZCEEN
+    AND AZCEAI <> 'VA '
+
+    WHERE (NHEADT = {yesterday}
+    OR NHMODT = {yesterday})
+    AND NHAGRN = 0
+    AND NHAPPF = 'PF'
+''')
+
 updl_violation = (f'''
     SELECT
     TRIM(NHARCO) AS SITE,
+    '*MARKET*' AS MARKET,
     NHCANO AS CA,
     TRIM(NHCADC) AS DESCRIPTION,
     NHCASD AS START_DT,
@@ -83,6 +127,7 @@ charge_overlaps = customer_incentives_overlaps.replace("*TYPES*", "'UPCH','LASU'
 expiring_deals = (f'''
     SELECT
     NHARCO AS SITE, 
+    '*MARKET*' AS MARKET,
     ACCOUNT_TYPE,
     NHCANO AS CA_NO,
     NHCADC AS CA_DESCRIPTION,
