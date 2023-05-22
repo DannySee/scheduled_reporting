@@ -10,7 +10,7 @@ from data_centers import all_sites
 if __name__ == "__main__":
 
     # daily jobs
-    server_jobs.cal_backup()
+    #server_jobs.cal_backup()
 
     # daily reporting
     report_list = [ci.updl_violation, ci.daily_validation]
@@ -21,7 +21,7 @@ if __name__ == "__main__":
         report_list.append(dpm.foodbuy_overlaps)
 
     # monthly reporting
-    if dt.now.day() == 1:
+    if dt.now.day == 1:
         report_list.append(ci.expiring_deals)
 
     # run reporting accross usbl

@@ -40,7 +40,7 @@ def sus_reporting(reports, sites):
 
                 if 'custom_job' in report:
 
-                    report['custom_job']['import'](sus)
+                    report['custom_job']['import'](sus, site)
             
                 else:
 

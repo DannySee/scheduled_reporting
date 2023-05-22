@@ -2,7 +2,6 @@ from datetime import  datetime, timedelta, date
 
 now = date.today()
 
-
 def sus(day):
     if day == 'today':
         return now.strftime('%Y%m%d')

@@ -11,28 +11,30 @@ today = dt.pretty("today")
 # Foodbuy Overlap Reports
 ############################################################################################
 
-def import_foodbuy_overlaps(cnn_sus):
+def import_foodbuy_overlaps(cnn_sus, site):
 
-    cnn_server = sql_server()
+    if site != '240':
 
-    overlaps = {
-        'Foodbuy_Overlap_Header': sql.foodbuy_overlap_header_sus,
-        'Foodbuy_Overlap_Item': sql.foodbuy_overlap_item_sus,
-        'Foodbuy_Overlap_customer': sql.foodbuy_overlap_customer_sus
-    }
+        cnn_server = sql_server()
 
-    for table in overlaps:
+        overlaps = {
+            'Foodbuy_Overlap_Header': sql.foodbuy_overlap_header_sus,
+            'Foodbuy_Overlap_Item': sql.foodbuy_overlap_item_sus,
+            'Foodbuy_Overlap_customer': sql.foodbuy_overlap_customer_sus
+        }
 
-        rows = cnn_sus.execute(overlaps[table]).fetchall()
-        if len(rows) > 0:
-            dataset = ','.join(str(row) for row in rows)
-            cnn_server.execute(f"INSERT INTO {table} VALUES{dataset}")
+        for table in overlaps:
 
-        print(table)
-                        
-    cnn_server.execute(sql.foodbuy_server_cleanup)
-    cnn_server.commit()
-    cnn_server.close()
+            rows = cnn_sus.execute(overlaps[table]).fetchall()
+            if len(rows) > 0:
+                dataset = ','.join(str(row) for row in rows)
+                cnn_server.execute(f"INSERT INTO {table} VALUES{dataset}")
+
+            print(table)
+                            
+        cnn_server.execute(sql.foodbuy_server_cleanup)
+        cnn_server.commit()
+        cnn_server.close()
 
 
 def export_foodbuy_overlaps(filename):
