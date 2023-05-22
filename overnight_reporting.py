@@ -10,7 +10,7 @@ from data_centers import all_sites
 if __name__ == "__main__":
 
     # daily jobs
-    #server_jobs.cal_backup()
+    server_jobs.cal_backup()
 
     # daily reporting
     report_list = [ci.updl_violation, ci.daily_validation]
