@@ -78,7 +78,7 @@ rebate_basis_validatoin = {
     'filename': f'Rebate_Basis_Validation_{today}',
     'data': [], 
     'headers': '',
-    'mail_to': 'daniel.clark@sysco.com',
+    'mail_to': 'qapricingagreements@sbs.sysco.com',
     'mail_subject': f'Daily Rebate Basis Validation {today}',
     'mail_body': f'Deviated Agreements:\nDaily Rebate Basis Violation {today}.'
 } 
