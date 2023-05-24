@@ -197,3 +197,4 @@ def sql_server():
         database='Pricing_Agreements')
     
     return server
+

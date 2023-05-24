@@ -61,10 +61,11 @@ def export_foodbuy_overlaps(filename):
 
 foodbuy_overlaps = {
     'custom_job': {'import': import_foodbuy_overlaps, 'export': export_foodbuy_overlaps},
+    'send_if_null': True,
     'filename': f'Foodbuy_Overlapping_Deals_{today}',
     'data': [], 
     'headers': '',
-    'mail_to': 'daniel.clark@sysco.com',
+    'mail_to': 'GPOCommercialDesk@Sysco.com',
     'mail_subject': f'Foodbuy Overlapping Deals Report: Week of {dt.pretty("beginning_of_last_week")}',
     'mail_body': f'Overlapping Foodbuy Agreements {dt.pretty("beginning_of_last_week")} to {dt.pretty("end_of_last_week")}.'
 } 
@@ -75,6 +76,7 @@ foodbuy_overlaps = {
 
 rebate_basis_validatoin = {
     'sql': sql.rebate_basis_validation, 
+    'send_if_null': True,
     'filename': f'Rebate_Basis_Validation_{today}',
     'data': [], 
     'headers': '',

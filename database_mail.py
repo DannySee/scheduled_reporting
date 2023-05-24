@@ -16,6 +16,7 @@ def send_message(to, subject, body, attachment):
     EXEC msdb.dbo.sp_send_dbmail
         @profile_name = @MailProfile,
         @recipients = @Recipients,
+        @blind_copy_recipients = 'daniel.clark@sysco.com',
         @subject = @Subject,
         @body = @Body,
         @file_attachments = @Attachment;

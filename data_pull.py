@@ -10,23 +10,25 @@ def deliver_report(reports):
 
     for report in reports:
 
-        filename = f"C:\\Temp\\outgoing_mail\\{report['filename']}.xlsx"
-        mail_to = report['mail_to']
-        mail_subject = report['mail_subject']
-        mail_body = report["mail_body"]
+        if not (len(report['data']) == 0 and report['send_if_null'] == False):
 
-        if 'custom_job' in report:
-            report['custom_job']['export'](filename)
-        else:
-            headers = report['headers']
-            content = report['data']
-            mail_body = mail_body + f'\n\nRecord count: {len(report["data"])}'
-            
-            create_file(filename, headers, content)
+            filename = f"C:\\Temp\\outgoing_mail\\{report['filename']}.xlsx"
+            mail_to = report['mail_to']
+            mail_subject = report['mail_subject']
+            mail_body = report["mail_body"]
 
-        send_message(mail_to, mail_subject, mail_body, filename)
+            if 'custom_job' in report:
+                report['custom_job']['export'](filename)
+            else:
+                headers = report['headers']
+                content = report['data']
+                mail_body = mail_body + f'\n\nRecord count: {len(report["data"])}'
+                
+                create_file(filename, headers, content)
 
-        os.remove(filename)
+            send_message(mail_to, mail_subject, mail_body, filename)
+
+            os.remove(filename)
 
 
 def sus_reporting(reports, sites):
