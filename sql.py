@@ -72,7 +72,7 @@ updl_violation = (f'''
     INNER JOIN SCDBFP10.PMPZO5L0 AS T2
     ON NHCANO = O5CANO
 
-    WHERE NHEADT = {yesterday}
+    WHERE NHCAED >= {today}
     AND NHAGTY = 'UPDL' 
     AND NHPFRB <> 'DL'
     AND NHAGRN = 0   
