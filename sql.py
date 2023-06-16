@@ -120,7 +120,7 @@ admin_overlaps = customer_incentives_overlaps.replace("*TYPES*", "'ASR1','ASR2',
 drop_overlaps = customer_incentives_overlaps.replace("*TYPES*", "'DPI1','DPI2','DPI3','DPI4','DPI5','DPI6','DPA1','DPA2','DPA3','DPA4','DRUP','EDCP'")
   
 volume_overlaps = customer_incentives_overlaps.replace("*TYPES*", "'BDS1','BDS2','BDS3','BDS4','BDV1','BDV2','BDV3','BDV4','BDV5','BDV6','BDV7','BDV8','VPR1','VPR2','VPR3','VPR4','VPR5','VPR6','VPR7','VPR8'")
-   
+
 licg_overlaps = customer_incentives_overlaps.replace("*TYPES*", "'LICG'")
 
 charge_overlaps = customer_incentives_overlaps.replace("*TYPES*", "'UPCH','LASU'")
