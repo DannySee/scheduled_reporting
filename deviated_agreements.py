@@ -10,6 +10,31 @@ today = dt.pretty("today")
 ############################################################################################
 # Foodbuy Overlap Reports
 ############################################################################################
+def insert_into_sql_server(cnn, dataset, table):
+    
+    # get row count of dataset
+    row_count = len(dataset)
+
+    # sql server has an insert row max of 1000 records - handle differently depending on size of dataset
+    if row_count > 1000:
+
+        # loop through dataset in chuncks of 1000 records
+        for i in range(0, row_count, 1000):
+
+            # format chunk of 1000 insert into sql server
+            rows = ','.join(str(row) for row in dataset[i:i+1000])
+            cnn.execute(f'INSERT INTO {table} VALUES{rows}')
+            print(f'chunk upload {i} complete')
+            
+        # commit insert statement after all chunks have been loaded in the server
+        cnn.commit()
+    elif row_count > 0:
+
+        # format dataset, insert into sql server and commit
+        rows = ','.join(str(row) for row in dataset)
+        cnn.execute(f'INSERT INTO {table} VALUES{rows}')
+        cnn.commit()
+
 
 def import_foodbuy_overlaps(cnn_sus, site):
 
@@ -18,19 +43,22 @@ def import_foodbuy_overlaps(cnn_sus, site):
         cnn_server = sql_server()
 
         overlaps = {
-            'Foodbuy_Overlap_Header': sql.foodbuy_overlap_header_sus,
-            'Foodbuy_Overlap_Item': sql.foodbuy_overlap_item_sus,
-            'Foodbuy_Overlap_customer': sql.foodbuy_overlap_customer_sus
+            'Foodbuy_Overlap_Header': [],
+            'Foodbuy_Overlap_Item': [],
+            'Foodbuy_Overlap_customer': []
         }
 
+        overlaps['Foodbuy_Overlap_Header'] = cnn_sus.execute(sql.foodbuy_overlap_header_sus).fetchall()
+        foodbuy_agreements = ",".join(str(row.FOODBUY_AGREEMENT) for row in overlaps['Foodbuy_Overlap_Header'])
+        direct_agreements = ",".join(str(row.DIRECT_AGREEMENT) for row in overlaps['Foodbuy_Overlap_Header'])
+
+        overlaps['Foodbuy_Overlap_Item'] = cnn_sus.execute(sql.foodbuy_overlap_item_sus(foodbuy_agreements, direct_agreements)).fetchall()
+        overlaps['Foodbuy_Overlap_customer'] = cnn_sus.execute(sql.foodbuy_overlap_customer_sus(foodbuy_agreements, direct_agreements)).fetchall()
+
         for table in overlaps:
-
-            rows = cnn_sus.execute(overlaps[table]).fetchall()
-            if len(rows) > 0:
-                dataset = ','.join(str(row) for row in rows)
-                cnn_server.execute(f"INSERT INTO {table} VALUES{dataset}")
-
-            print(table)
+            print(f'processing {table}')
+            insert_into_sql_server(cnn_server, overlaps[table], table)
+            print(f'upload complete: {table}')
                             
         cnn_server.execute(sql.foodbuy_server_cleanup)
         cnn_server.commit()

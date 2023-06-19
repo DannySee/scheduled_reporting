@@ -186,14 +186,14 @@ edfs_overlaps = ''
 # Foodbuy Overlapping Agreements
 ############################################################################################
 
-foodbuy_overlap_header_sus = (f"""
+foodbuy_overlap_header_sus = f"""
     SELECT
     'VA',
-    CAST(FBUY_VA AS VARCHAR(11)),
+    CAST(FBUY_VA AS VARCHAR(11)) AS FOODBUY_AGREEMENT,
     TRIM(FOODBUY.M7VAGD) AS FBUY_DESCRIPTION,
     LEFT(RIGHT(FOODBUY.M7VASD,4),2) || '/' || RIGHT(FOODBUY.M7VASD,2) ||'/' || LEFT(FOODBUY.M7VASD,4) AS FBUY_START,
     LEFT(RIGHT(FOODBUY.M7VAED,4),2) || '/' || RIGHT(FOODBUY.M7VAED,2) ||'/' || LEFT(FOODBUY.M7VAED,4) AS FBUY_END,
-    CAST(DIRECT_VA AS VARCHAR(11)),
+    CAST(DIRECT_VA AS VARCHAR(11)) AS DIRECT_AGREEMENT,
     TRIM(DIRECT.M7VAGD) AS DIRECT_DESCRIPTION,
     LEFT(RIGHT(DIRECT.M7VASD,4),2) || '/' || RIGHT(DIRECT.M7VASD,2) ||'/' || LEFT(DIRECT.M7VASD,4) AS DIRECT_START,
     LEFT(RIGHT(DIRECT.M7VAED,4),2) || '/' || RIGHT(DIRECT.M7VAED,2) ||'/' || LEFT(DIRECT.M7VAED,4) AS DIRECT_END,
@@ -209,32 +209,24 @@ foodbuy_overlap_header_sus = (f"""
     FROM (
 
         SELECT DISTINCT
-        FOODBUY.LEAD_VA AS FBUY_VA,
-        DIRECT.LEAD_VA AS DIRECT_VA
+        FOODBUY.LOCAL_VA AS FBUY_VA,
+        DIRECT.LOCAL_VA AS DIRECT_VA
 
         FROM (
 
             SELECT
-            M7AGRN AS LEAD_VA,
-            M7VAGN AS LOCAL_VA,
+            HEADER.VA AS LOCAL_VA,
             ITEM.SUPC
 
             FROM (
                 SELECT DISTINCT
-                CAST(TRIM(BJELEN) AS INT) AS VA
+                M7VAGN AS VA
 
-                FROM SCDBFP10.PMFDBJV1
+                FROM SCDBFP10.PMVHM7PF
 
-                WHERE BJDPNM LIKE '%FOODBUY%'
-                AND LEFT(BJBIE1,2) = 'VA'
-                AND UPPER(BJELEN) = LOWER(BJELEN)
-                AND BJELEN IS NOT NULL
-                AND TRIM(BJELEN) <> ''
+                WHERE M7AGRN = 999999999
+                AND M7VAED >= {today}
             ) AS HEADER
-
-            INNER JOIN SCDBFP10.PMVHM7PF
-            ON HEADER.VA = M7AGRN
-            AND M7EADT >= {bolw}
 
             INNER JOIN (
                 SELECT
@@ -245,32 +237,24 @@ foodbuy_overlap_header_sus = (f"""
 
                 WHERE QBEFED >= {today}
             ) AS ITEM
-            ON M7VAGN = ITEM.LOCAL_VA
+            ON HEADER.VA = ITEM.LOCAL_VA
         ) AS FOODBUY
 
         INNER JOIN (
 
             SELECT
-            M7AGRN AS LEAD_VA,
-            M7VAGN LOCAL_VA,
+            HEADER.VA AS LOCAL_VA,
             ITEM.SUPC
 
             FROM (
                 SELECT DISTINCT
-                CAST(TRIM(BJELEN) AS INT) AS VA
+                M7VAGN AS VA
 
-                FROM SCDBFP10.PMFDBJV1
+                FROM SCDBFP10.PMVHM7PF
 
-                WHERE BJDPNM NOT LIKE '%FOODBUY%'
-                AND LEFT(BJBIE1,2) = 'VA'
-                AND UPPER(BJELEN) = LOWER(BJELEN)
-                AND BJELEN IS NOT NULL
-                AND TRIM(BJELEN) <> ''
+                WHERE M7AGRN <> 999999999
+                AND M7VAED >= {today}
             ) AS HEADER
-
-            INNER JOIN SCDBFP10.PMVHM7PF
-            ON HEADER.VA = M7AGRN
-            AND M7EADT >= {bolw}
 
             INNER JOIN (
                 SELECT
@@ -281,39 +265,31 @@ foodbuy_overlap_header_sus = (f"""
 
                 WHERE QBEFED >= {today}
             ) AS ITEM
-            ON M7VAGN = ITEM.LOCAL_VA
+            ON HEADER.VA = ITEM.LOCAL_VA
         ) AS DIRECT
         ON FOODBUY.SUPC = DIRECT.SUPC
 
         INNER JOIN (
 
             SELECT DISTINCT
-            FOODBUY.LEAD_VA AS FOODBUY_VA,
-            DIRECT.LEAD_VA AS DIRECT_VA
+            FOODBUY.LOCAL_VA AS FOODBUY_VA,
+            DIRECT.LOCAL_VA AS DIRECT_VA
 
             FROM (
 
                 SELECT
-                M7AGRN AS LEAD_VA,
-                M7VAGN AS LOCAL_VA,
+                HEADER.VA AS LOCAL_VA,
                 CUSTOMER.SHIP_TO
 
                 FROM (
                     SELECT DISTINCT
-                    CAST(TRIM(BJELEN) AS INT) AS VA
+                    M7VAGN AS VA
 
-                    FROM SCDBFP10.PMFDBJV1
+                    FROM SCDBFP10.PMVHM7PF
 
-                    WHERE BJDPNM LIKE '%FOODBUY%'
-                    AND LEFT(BJBIE1,2) = 'VA'
-                    AND UPPER(BJELEN) = LOWER(BJELEN)
-                    AND BJELEN IS NOT NULL
-                    AND TRIM(BJELEN) <> ''
+                    WHERE M7AGRN = 999999999
+                    AND M7VAED >= {today}
                 ) AS HEADER
-
-                INNER JOIN SCDBFP10.PMVHM7PF
-                ON HEADER.VA = M7AGRN
-                AND M7EADT >= {bolw}
 
                 INNER JOIN (
                     SELECT
@@ -324,33 +300,25 @@ foodbuy_overlap_header_sus = (f"""
 
                     WHERE QWEFED >= {today}
                 ) AS CUSTOMER
-                ON M7VAGN = CUSTOMER.LOCAL_VA
+                ON HEADER.VA = CUSTOMER.LOCAL_VA
 
             ) AS FOODBUY
 
             INNER JOIN (
 
                 SELECT
-                M7AGRN AS LEAD_VA,
-                M7VAGN AS LOCAL_VA,
+                HEADER.VA AS LOCAL_VA,
                 CUSTOMER.SHIP_TO
 
                 FROM (
                     SELECT DISTINCT
-                    CAST(TRIM(BJELEN) AS INT) AS VA
+                    M7VAGN AS VA
 
-                    FROM SCDBFP10.PMFDBJV1
+                    FROM SCDBFP10.PMVHM7PF
 
-                    WHERE BJDPNM NOT LIKE '%FOODBUY%'
-                    AND LEFT(BJBIE1,2) = 'VA'
-                    AND UPPER(BJELEN) = LOWER(BJELEN)
-                    AND BJELEN IS NOT NULL
-                    AND TRIM(BJELEN) <> ''
+                    WHERE M7AGRN <> 999999999
+                    AND M7VAED >= {today}
                 ) AS HEADER
-
-                INNER JOIN SCDBFP10.PMVHM7PF
-                ON HEADER.VA = M7AGRN
-                AND M7EADT >={bolw}
 
                 INNER JOIN (
                     SELECT
@@ -361,19 +329,19 @@ foodbuy_overlap_header_sus = (f"""
 
                     WHERE QWEFED >= {today}
                 ) AS CUSTOMER
-                ON M7VAGN = CUSTOMER.LOCAL_VA
+                ON HEADER.VA = CUSTOMER.LOCAL_VA
             ) AS DIRECT
             ON FOODBUY.SHIP_TO = DIRECT.SHIP_TO
         ) AS CUSTOMER_OVERLAP
-        ON FOODBUY.LEAD_VA = CUSTOMER_OVERLAP.FOODBUY_VA
-        AND DIRECT.LEAD_VA = CUSTOMER_OVERLAP.DIRECT_VA
+        ON FOODBUY.LOCAL_VA = CUSTOMER_OVERLAP.FOODBUY_VA
+        AND DIRECT.LOCAL_VA = CUSTOMER_OVERLAP.DIRECT_VA
     )
 
     LEFT JOIN SCDBFP10.PMVHM7PF AS FOODBUY
-    ON FBUY_VA = FOODBUY.M7AGRN
+    ON FBUY_VA = FOODBUY.M7VAGN
 
     LEFT JOIN SCDBFP10.PMVHM7PF AS DIRECT
-    ON DIRECT_VA = DIRECT.M7AGRN
+    ON DIRECT_VA = DIRECT.M7VAGN
 
     LEFT JOIN SCDBFP10.PMPYNKPF AS FOODBUY_OVERRIDE
     ON FOODBUY.M7VAGN = FOODBUY_OVERRIDE.NKPANO
@@ -393,7 +361,6 @@ foodbuy_overlap_header_sus = (f"""
 
     WHERE DIRECT.M7VASD <= FOODBUY.M7VAED
     AND DIRECT.M7VAED >= FOODBUY.M7VASD
-    AND FOODBUY.M7AGRN <> 749911
     AND DIRECT.M7VAGD NOT LIKE '%REPORTING FEE%'
     AND DIRECT.M7VAGD NOT LIKE '%NATIONAL PRICING%'
     AND DIRECT.M7VAGD NOT LIKE '%BLANKET%'
@@ -403,419 +370,138 @@ foodbuy_overlap_header_sus = (f"""
     DIRECT_VA
 
     LIMIT 1000
-""")
+"""
 
-foodbuy_overlap_item_sus = (f"""
-    SELECT
-    'VA',
-    CAST(FBUY_VA AS VARCHAR(11)),
-    TRIM(FOODBUY.M7VAGD) AS FBUY_DESCRIPTION,
-    LEFT(RIGHT(FOODBUY.M7VASD,4),2) || '/' || RIGHT(FOODBUY.M7VASD,2) ||'/' || LEFT(FOODBUY.M7VASD,4) AS FBUY_START,
-    LEFT(RIGHT(FOODBUY.M7VAED,4),2) || '/' || RIGHT(FOODBUY.M7VAED,2) ||'/' || LEFT(FOODBUY.M7VAED,4) AS FBUY_END,
-    CAST(DIRECT_VA AS VARCHAR(11)),
-    TRIM(DIRECT.M7VAGD) AS DIRECT_DESCRIPTION,
-    LEFT(RIGHT(DIRECT.M7VASD,4),2) || '/' || RIGHT(DIRECT.M7VASD,2) ||'/' || LEFT(DIRECT.M7VASD,4) AS DIRECT_START,
-    LEFT(RIGHT(DIRECT.M7VAED,4),2) || '/' || RIGHT(DIRECT.M7VAED,2) ||'/' || LEFT(DIRECT.M7VAED,4) AS DIRECT_END,
-    TRIM(SUPC) AS SUPC,
-    TRIM(JFITDS) AS ITEM_DESCRIPTION,
-    '{timestamp}' AS TIMESTAMP
-
-    FROM (
-
-        SELECT DISTINCT
-        FOODBUY.LEAD_VA AS FBUY_VA,
-        DIRECT.LEAD_VA AS DIRECT_VA,
-        FOODBUY.SUPC
+def foodbuy_overlap_item_sus(foodbuy_agreements, direct_agreements):
+    return f"""
+        SELECT
+        'VA',
+        CAST(FOODBUY_HEADER.M7VAGN AS VARCHAR(11)),
+        TRIM(FOODBUY_HEADER.M7VAGD) AS FBUY_DESCRIPTION,
+        LEFT(RIGHT(FOODBUY_HEADER.M7VASD,4),2) || '/' || RIGHT(FOODBUY_HEADER.M7VASD,2) ||'/' || LEFT(FOODBUY_HEADER.M7VASD,4) AS FBUY_START,
+        LEFT(RIGHT(FOODBUY_HEADER.M7VAED,4),2) || '/' || RIGHT(FOODBUY_HEADER.M7VAED,2) ||'/' || LEFT(FOODBUY_HEADER.M7VAED,4) AS FBUY_END,
+        CAST(DIRECT_HEADER.M7VAGN AS VARCHAR(11)),
+        TRIM(DIRECT_HEADER.M7VAGD) AS DIRECT_DESCRIPTION,
+        LEFT(RIGHT(DIRECT_HEADER.M7VASD,4),2) || '/' || RIGHT(DIRECT_HEADER.M7VASD,2) ||'/' || LEFT(DIRECT_HEADER.M7VASD,4) AS DIRECT_START,
+        LEFT(RIGHT(DIRECT_HEADER.M7VAED,4),2) || '/' || RIGHT(DIRECT_HEADER.M7VAED,2) ||'/' || LEFT(DIRECT_HEADER.M7VAED,4) AS DIRECT_END,
+        TRIM(FOODBUY_ITEM.SUPC) AS SUPC,
+        TRIM(JFITDS) AS ITEM_DESCRIPTION,
+        '{timestamp}' AS TIMESTAMP
 
         FROM (
-
-            SELECT
-            M7AGRN AS LEAD_VA,
-            M7VAGN AS LOCAL_VA,
-            ITEM.SUPC
-
-            FROM (
-                SELECT DISTINCT
-                CAST(TRIM(BJELEN) AS INT) AS VA
-
-                FROM SCDBFP10.PMFDBJV1
-
-                WHERE BJDPNM LIKE '%FOODBUY%'
-                AND LEFT(BJBIE1,2) = 'VA'
-                AND UPPER(BJELEN) = LOWER(BJELEN)
-                AND BJELEN IS NOT NULL
-                AND TRIM(BJELEN) <> ''
-            ) AS HEADER
-
-            INNER JOIN SCDBFP10.PMVHM7PF
-            ON HEADER.VA = M7AGRN
-            AND M7EADT >= {bolw}
-
-            INNER JOIN (
-                SELECT
-                QBVAGN AS LOCAL_VA,
-                QBITEM AS SUPC
-
-                FROM SCDBFP10.PMPZQBPF
-
-                WHERE QBEFED >= {today}
-            ) AS ITEM
-            ON M7VAGN = ITEM.LOCAL_VA
-        ) AS FOODBUY
-
-        INNER JOIN (
-
-            SELECT
-            M7AGRN AS LEAD_VA,
-            M7VAGN LOCAL_VA,
-            ITEM.SUPC
-
-            FROM (
-                SELECT DISTINCT
-                CAST(TRIM(BJELEN) AS INT) AS VA
-
-                FROM SCDBFP10.PMFDBJV1
-
-                WHERE BJDPNM NOT LIKE '%FOODBUY%'
-                AND LEFT(BJBIE1,2) = 'VA'
-                AND UPPER(BJELEN) = LOWER(BJELEN)
-                AND BJELEN IS NOT NULL
-                AND TRIM(BJELEN) <> ''
-            ) AS HEADER
-
-            INNER JOIN SCDBFP10.PMVHM7PF
-            ON HEADER.VA = M7AGRN
-            AND M7EADT >= {bolw}
-
-            INNER JOIN (
-                SELECT
-                QBVAGN AS LOCAL_VA,
-                QBITEM AS SUPC
-
-                FROM SCDBFP10.PMPZQBPF
-
-                WHERE QBEFED >= {today}
-            ) AS ITEM
-            ON M7VAGN = ITEM.LOCAL_VA
-        ) AS DIRECT
-        ON FOODBUY.SUPC = DIRECT.SUPC
-
-        INNER JOIN (
-
             SELECT DISTINCT
-            FOODBUY.LEAD_VA AS FOODBUY_VA,
-            DIRECT.LEAD_VA AS DIRECT_VA
+            QBVAGN AS VA, 
+            QBITEM AS SUPC, 
+            QBEFSD AS EFF_DT,
+            QBEFED AS END_DT
 
-            FROM (
+            FROM SCDBFP10.PMPZQBPF
 
-                SELECT
-                M7AGRN AS LEAD_VA,
-                M7VAGN AS LOCAL_VA,
-                CUSTOMER.SHIP_TO
+            WHERE QBVAGN IN ({foodbuy_agreements})
+        ) AS FOODBUY_ITEM
 
-                FROM (
-                    SELECT DISTINCT
-                    CAST(TRIM(BJELEN) AS INT) AS VA
+        INNER JOIN (
+            SELECT DISTINCT
+            QBVAGN AS VA, 
+            QBITEM AS SUPC, 
+            QBEFSD AS EFF_DT,
+            QBEFED AS END_DT
 
-                    FROM SCDBFP10.PMFDBJV1
+            FROM SCDBFP10.PMPZQBPF
 
-                    WHERE BJDPNM LIKE '%FOODBUY%'
-                    AND LEFT(BJBIE1,2) = 'VA'
-                    AND UPPER(BJELEN) = LOWER(BJELEN)
-                    AND BJELEN IS NOT NULL
-                    AND TRIM(BJELEN) <> ''
-                ) AS HEADER
+            WHERE QBVAGN IN ({direct_agreements})
+        ) AS DIRECT_ITEM
+        ON FOODBUY_ITEM.SUPC = DIRECT_ITEM.SUPC
+        AND FOODBUY_ITEM.EFF_DT <= DIRECT_ITEM.END_DT
+        AND FOODBUY_ITEM.END_DT >= DIRECT_ITEM.EFF_DT
 
-                INNER JOIN SCDBFP10.PMVHM7PF
-                ON HEADER.VA = M7AGRN
-                AND M7EADT >= {bolw}
+        LEFT JOIN SCDBFP10.PMVHM7PF AS FOODBUY_HEADER
+        ON FOODBUY_ITEM.VA = FOODBUY_HEADER.M7VAGN
 
-                INNER JOIN (
-                    SELECT
-                    QWVAGN AS LOCAL_VA,
-                    QWCUNO AS SHIP_TO
+        LEFT JOIN SCDBFP10.PMVHM7PF AS DIRECT_HEADER
+        ON DIRECT_ITEM.VA = DIRECT_HEADER.M7VAGN
 
-                    FROM SCDBFP10.PMPZQWPF
+        LEFT JOIN SCDBFP10.USIAJFPF
+        ON FOODBUY_ITEM.SUPC = JFITEM
 
-                    WHERE QWEFED >= {today}
-                ) AS CUSTOMER
-                ON M7VAGN = CUSTOMER.LOCAL_VA
+        WHERE DIRECT_HEADER.M7VAGD NOT LIKE '%REPORTING FEE%'
+        AND DIRECT_HEADER.M7VAGD NOT LIKE '%NATIONAL PRICING%'
+        AND DIRECT_HEADER.M7VAGD NOT LIKE '%BLANKET%'
 
-            ) AS FOODBUY
+        ORDER BY
+        FOODBUY_HEADER.M7VAGN,
+        DIRECT_HEADER.M7VAGN,
+        FOODBUY_ITEM.SUPC
+    """
 
-            INNER JOIN (
 
-                SELECT
-                M7AGRN AS LEAD_VA,
-                M7VAGN AS LOCAL_VA,
-                CUSTOMER.SHIP_TO
-
-                FROM (
-                    SELECT DISTINCT
-                    CAST(TRIM(BJELEN) AS INT) AS VA
-
-                    FROM SCDBFP10.PMFDBJV1
-
-                    WHERE BJDPNM NOT LIKE '%FOODBUY%'
-                    AND LEFT(BJBIE1,2) = 'VA'
-                    AND UPPER(BJELEN) = LOWER(BJELEN)
-                    AND BJELEN IS NOT NULL
-                    AND TRIM(BJELEN) <> ''
-                ) AS HEADER
-
-                INNER JOIN SCDBFP10.PMVHM7PF
-                ON HEADER.VA = M7AGRN
-                AND M7EADT >={bolw}
-
-                INNER JOIN (
-                    SELECT
-                    QWVAGN AS LOCAL_VA,
-                    QWCUNO AS SHIP_TO
-
-                    FROM SCDBFP10.PMPZQWPF
-
-                    WHERE QWEFED >= {today}
-                ) AS CUSTOMER
-                ON M7VAGN = CUSTOMER.LOCAL_VA
-            ) AS DIRECT
-            ON FOODBUY.SHIP_TO = DIRECT.SHIP_TO
-        ) AS CUSTOMER_OVERLAP
-        ON FOODBUY.LEAD_VA = CUSTOMER_OVERLAP.FOODBUY_VA
-        AND DIRECT.LEAD_VA = CUSTOMER_OVERLAP.DIRECT_VA
-    )
-
-    LEFT JOIN SCDBFP10.PMVHM7PF AS FOODBUY
-    ON FBUY_VA = FOODBUY.M7AGRN
-
-    LEFT JOIN SCDBFP10.PMVHM7PF AS DIRECT
-    ON DIRECT_VA = DIRECT.M7AGRN
-
-    LEFT JOIN SCDBFP10.USIAJFPF
-    ON SUPC = JFITEM
-
-    WHERE DIRECT.M7VASD <= FOODBUY.M7VAED
-    AND DIRECT.M7VAED >= FOODBUY.M7VASD
-    AND FOODBUY.M7AGRN <> 749911
-    AND DIRECT.M7VAGD NOT LIKE '%REPORTING FEE%'
-    AND DIRECT.M7VAGD NOT LIKE '%NATIONAL PRICING%'
-    AND DIRECT.M7VAGD NOT LIKE '%BLANKET%'
-
-    ORDER BY
-    FBUY_VA,
-    DIRECT_VA,
-    SUPC
-
-    LIMIT 1000
-""")
-
-foodbuy_overlap_customer_sus = (f"""
-    SELECT
-    TRIM(FOODBUY.M7ARCO) AS SITE,
-    TRIM(LEFT(REFDAT, LOCATE('YN', REFDAT)-1)) AS SITE_NAME,
-    'VA',
-    CAST(FBUY_VA AS VARCHAR(11)),
-    TRIM(FOODBUY.M7VAGD) AS FBUY_DESCRIPTION,
-    LEFT(RIGHT(FOODBUY.M7VASD,4),2) || '/' || RIGHT(FOODBUY.M7VASD,2) ||'/' || LEFT(FOODBUY.M7VASD,4) AS FBUY_START,
-    LEFT(RIGHT(FOODBUY.M7VAED,4),2) || '/' || RIGHT(FOODBUY.M7VAED,2) ||'/' || LEFT(FOODBUY.M7VAED,4) AS FBUY_END,
-    CAST(DIRECT_VA AS VARCHAR(11)),
-    TRIM(DIRECT.M7VAGD) AS DIRECT_DESCRIPTION,
-    LEFT(RIGHT(DIRECT.M7VASD,4),2) || '/' || RIGHT(DIRECT.M7VASD,2) ||'/' || LEFT(DIRECT.M7VASD,4) AS DIRECT_START,
-    LEFT(RIGHT(DIRECT.M7VAED,4),2) || '/' || RIGHT(DIRECT.M7VAED,2) ||'/' || LEFT(DIRECT.M7VAED,4) AS DIRECT_END,
-    TRIM(SHIP_TO) AS DCN,
-    REPLACE(TRIM(CUNAME),'''','') AS CUSTOMER_NAME,
-    '{timestamp}' AS TIMESTAMP
-
-    FROM (
-
-        SELECT DISTINCT
-        FOODBUY.LEAD_VA AS FBUY_VA,
-        DIRECT.LEAD_VA AS DIRECT_VA,
-        CUSTOMER_OVERLAP.SHIP_TO
+def foodbuy_overlap_customer_sus (foodbuy_agreements, direct_agreements):
+    return f"""
+        SELECT 
+        TRIM(FOODBUY_HEADER.M7ARCO) AS SITE,
+        TRIM(LEFT(REFDAT, LOCATE('YN', REFDAT)-1)) AS SITE_NAME,
+        'VA',
+        CAST(FOODBUY_CUSTOMER.VA AS VARCHAR(11)),
+        TRIM(FOODBUY_HEADER.M7VAGD) AS FBUY_DESCRIPTION,
+        LEFT(RIGHT(FOODBUY_HEADER.M7VASD,4),2) || '/' || RIGHT(FOODBUY_HEADER.M7VASD,2) ||'/' || LEFT(FOODBUY_HEADER.M7VASD,4) AS FBUY_START,
+        LEFT(RIGHT(FOODBUY_HEADER.M7VAED,4),2) || '/' || RIGHT(FOODBUY_HEADER.M7VAED,2) ||'/' || LEFT(FOODBUY_HEADER.M7VAED,4) AS FBUY_END,
+        CAST(DIRECT_CUSTOMER.VA AS VARCHAR(11)),
+        TRIM(DIRECT_HEADER.M7VAGD) AS DIRECT_DESCRIPTION,
+        LEFT(RIGHT(DIRECT_HEADER.M7VASD,4),2) || '/' || RIGHT(DIRECT_HEADER.M7VASD,2) ||'/' || LEFT(DIRECT_HEADER.M7VASD,4) AS DIRECT_START,
+        LEFT(RIGHT(DIRECT_HEADER.M7VAED,4),2) || '/' || RIGHT(DIRECT_HEADER.M7VAED,2) ||'/' || LEFT(DIRECT_HEADER.M7VAED,4) AS DIRECT_END,
+        TRIM(DIRECT_CUSTOMER.CUSTOMER) AS DCN,
+        REPLACE(TRIM(CUNAME),'''','') AS CUSTOMER_NAME,
+        '{timestamp}' AS TIMESTAMP
 
         FROM (
-
-            SELECT
-            M7AGRN AS LEAD_VA,
-            M7VAGN AS LOCAL_VA,
-            ITEM.SUPC
-
-            FROM (
-                SELECT DISTINCT
-                CAST(TRIM(BJELEN) AS INT) AS VA
-
-                FROM SCDBFP10.PMFDBJV1
-
-                WHERE BJDPNM LIKE '%FOODBUY%'
-                AND LEFT(BJBIE1,2) = 'VA'
-                AND UPPER(BJELEN) = LOWER(BJELEN)
-                AND BJELEN IS NOT NULL
-                AND TRIM(BJELEN) <> ''
-            ) AS HEADER
-
-            INNER JOIN SCDBFP10.PMVHM7PF
-            ON HEADER.VA = M7AGRN
-            AND M7EADT >= {bolw}
-
-            INNER JOIN (
-                SELECT
-                QBVAGN AS LOCAL_VA,
-                QBITEM AS SUPC
-
-                FROM SCDBFP10.PMPZQBPF
-
-                WHERE QBEFED >= {today}
-            ) AS ITEM
-            ON M7VAGN = ITEM.LOCAL_VA
-        ) AS FOODBUY
-
-        INNER JOIN (
-
-            SELECT
-            M7AGRN AS LEAD_VA,
-            M7VAGN LOCAL_VA,
-            ITEM.SUPC
-
-            FROM (
-                SELECT DISTINCT
-                CAST(TRIM(BJELEN) AS INT) AS VA
-
-                FROM SCDBFP10.PMFDBJV1
-
-                WHERE BJDPNM NOT LIKE '%FOODBUY%'
-                AND LEFT(BJBIE1,2) = 'VA'
-                AND UPPER(BJELEN) = LOWER(BJELEN)
-                AND BJELEN IS NOT NULL
-                AND TRIM(BJELEN) <> ''
-            ) AS HEADER
-
-            INNER JOIN SCDBFP10.PMVHM7PF
-            ON HEADER.VA = M7AGRN
-            AND M7EADT >= {bolw}
-
-            INNER JOIN (
-                SELECT
-                QBVAGN AS LOCAL_VA,
-                QBITEM AS SUPC
-
-                FROM SCDBFP10.PMPZQBPF
-
-                WHERE QBEFED >= {today}
-            ) AS ITEM
-            ON M7VAGN = ITEM.LOCAL_VA
-        ) AS DIRECT
-        ON FOODBUY.SUPC = DIRECT.SUPC
-
-        INNER JOIN (
-
             SELECT DISTINCT
-            FOODBUY.LEAD_VA AS FOODBUY_VA,
-            DIRECT.LEAD_VA AS DIRECT_VA,
-            FOODBUY.SHIP_TO
+            QWVAGN AS VA, 
+            QWCUNO AS CUSTOMER, 
+            QWEFSD AS EFF_DT,
+            QWEFED AS END_DT
 
-            FROM (
+            FROM SCDBFP10.PMPZQWPF
 
-                SELECT DISTINCT
-                M7AGRN AS LEAD_VA,
-                M7VAGN AS LOCAL_VA,
-                CUSTOMER.SHIP_TO
+            WHERE QWVAGN IN ({foodbuy_agreements})
+        ) AS FOODBUY_CUSTOMER
 
-                FROM (
-                    SELECT DISTINCT
-                    CAST(TRIM(BJELEN) AS INT) AS VA
+        INNER JOIN (
+            SELECT DISTINCT
+            QWVAGN AS VA, 
+            QWCUNO AS CUSTOMER, 
+            QWEFSD AS EFF_DT,
+            QWEFED AS END_DT
 
-                    FROM SCDBFP10.PMFDBJV1
+            FROM SCDBFP10.PMPZQWPF
 
-                    WHERE BJDPNM LIKE '%FOODBUY%'
-                    AND LEFT(BJBIE1,2) = 'VA'
-                    AND UPPER(BJELEN) = LOWER(BJELEN)
-                    AND BJELEN IS NOT NULL
-                    AND TRIM(BJELEN) <> ''
-                ) AS HEADER
+            WHERE QWVAGN IN ({direct_agreements})
+        ) AS DIRECT_CUSTOMER
+        ON FOODBUY_CUSTOMER.CUSTOMER = DIRECT_CUSTOMER.CUSTOMER
+        AND FOODBUY_CUSTOMER.EFF_DT <= DIRECT_CUSTOMER.END_DT
+        AND FOODBUY_CUSTOMER.END_DT >= DIRECT_CUSTOMER.EFF_DT
 
-                INNER JOIN SCDBFP10.PMVHM7PF
-                ON HEADER.VA = M7AGRN
-                AND M7EADT >= {bolw}
+        LEFT JOIN SCDBFP10.PMVHM7PF AS FOODBUY_HEADER
+        ON FOODBUY_CUSTOMER.VA = FOODBUY_HEADER.M7VAGN
 
-                INNER JOIN (
-                    SELECT
-                    QWVAGN AS LOCAL_VA,
-                    QWCUNO AS SHIP_TO
+        LEFT JOIN SCDBFP10.PMVHM7PF AS DIRECT_HEADER
+        ON DIRECT_CUSTOMER.VA = DIRECT_HEADER.M7VAGN
 
-                    FROM SCDBFP10.PMPZQWPF
+        LEFT JOIN ARDBFA.ARPCU
+        ON DIRECT_CUSTOMER.CUSTOMER = CUCUNO
 
-                    WHERE QWEFED >= {today}
-                ) AS CUSTOMER
-                ON M7VAGN = CUSTOMER.LOCAL_VA
+        LEFT JOIN SCDBFP10.REFERP
+        ON FOODBUY_HEADER.M7ARCO = REFKEY
+        AND REFCAT = 'DM '
 
-            ) AS FOODBUY
+        WHERE DIRECT_HEADER.M7VAGD NOT LIKE '%REPORTING FEE%'
+        AND DIRECT_HEADER.M7VAGD NOT LIKE '%NATIONAL PRICING%'
+        AND DIRECT_HEADER.M7VAGD NOT LIKE '%BLANKET%'
 
-            INNER JOIN (
-
-                SELECT
-                M7AGRN AS LEAD_VA,
-                M7VAGN AS LOCAL_VA,
-                CUSTOMER.SHIP_TO
-
-                FROM (
-                    SELECT DISTINCT
-                    CAST(TRIM(BJELEN) AS INT) AS VA
-
-                    FROM SCDBFP10.PMFDBJV1
-
-                    WHERE BJDPNM NOT LIKE '%FOODBUY%'
-                    AND LEFT(BJBIE1,2) = 'VA'
-                    AND UPPER(BJELEN) = LOWER(BJELEN)
-                    AND BJELEN IS NOT NULL
-                    AND TRIM(BJELEN) <> ''
-                ) AS HEADER
-
-                INNER JOIN SCDBFP10.PMVHM7PF
-                ON HEADER.VA = M7AGRN
-                AND M7EADT >={bolw}
-
-                INNER JOIN (
-                    SELECT
-                    QWVAGN AS LOCAL_VA,
-                    QWCUNO AS SHIP_TO
-
-                    FROM SCDBFP10.PMPZQWPF
-
-                    WHERE QWEFED >= {today}
-                ) AS CUSTOMER
-                ON M7VAGN = CUSTOMER.LOCAL_VA
-            ) AS DIRECT
-            ON FOODBUY.SHIP_TO = DIRECT.SHIP_TO
-        ) AS CUSTOMER_OVERLAP
-        ON FOODBUY.LEAD_VA = CUSTOMER_OVERLAP.FOODBUY_VA
-        AND DIRECT.LEAD_VA = CUSTOMER_OVERLAP.DIRECT_VA
-    )
-
-    LEFT JOIN SCDBFP10.PMVHM7PF AS FOODBUY
-    ON FBUY_VA = FOODBUY.M7AGRN
-
-    LEFT JOIN SCDBFP10.PMVHM7PF AS DIRECT
-    ON DIRECT_VA = DIRECT.M7AGRN
-
-    LEFT JOIN ARDBFA.ARPCU
-    ON SHIP_TO = CUCUNO
-
-    LEFT JOIN SCDBFP10.REFERP
-    ON FOODBUY.M7ARCO = REFKEY
-    AND REFCAT = 'DM '
-
-    WHERE DIRECT.M7VASD <= FOODBUY.M7VAED
-    AND DIRECT.M7VAED >= FOODBUY.M7VASD
-    AND FOODBUY.M7AGRN <> 749911
-    AND DIRECT.M7VAGD NOT LIKE '%REPORTING FEE%'
-    AND DIRECT.M7VAGD NOT LIKE '%NATIONAL PRICING%'
-    AND DIRECT.M7VAGD NOT LIKE '%BLANKET%'
-
-    ORDER BY
-    FBUY_VA,
-    DIRECT_VA,
-    SHIP_TO
-    LIMIT 1000
-""")
+        ORDER BY
+        FOODBUY_CUSTOMER.VA,
+        DIRECT_CUSTOMER.VA,
+        DIRECT_CUSTOMER.CUSTOMER
+    """
 
 foodbuy_overlap_header_server = F"""
     SELECT DISTINCT

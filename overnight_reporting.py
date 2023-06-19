@@ -18,7 +18,7 @@ if __name__ == "__main__":
     # weekly reporting
     if dt.now.weekday() == 0:
         report_list.extend(ci.overlaps)
-        report_list.append(dpm.foodbuy_overlaps)
+        #report_list.append(dpm.foodbuy_overlaps)
 
     # monthly reporting
     if dt.now.day == 1:
@@ -26,4 +26,6 @@ if __name__ == "__main__":
 
     # run reporting accross usbl
     sus_reporting(report_list, all_sites)
+
+    #sus_reporting([dpm.foodbuy_overlaps],all_sites)
 
