@@ -6,6 +6,7 @@ bolw = dt.sus('beginning_of_last_week')
 eolw = dt.sus('end_of_last_week')
 bom = dt.sus('beginning_of_month')
 eom = dt.sus('end_of_month')
+eonm = dt.sus('end_of_next_month')
 last_month = dt.pretty('month_back')
 timestamp = dt.pretty('today')
 
@@ -175,7 +176,7 @@ expiring_deals = (f'''
         OR NHAGTY IN ('LICG','UPCH')
     )
     AND NHAGRN = 0
-    AND NHCAED BETWEEN {bom} AND {eom}
+    AND NHCAED BETWEEN {bom} AND {eonm}
 ''')
 
 prompt_overlaps = ''
@@ -253,6 +254,7 @@ foodbuy_overlap_header_sus = f"""
                 FROM SCDBFP10.PMVHM7PF
 
                 WHERE M7AGRN <> 999999999
+                AND M7AGRN <> 0 
                 AND M7VAED >= {today}
             ) AS HEADER
 
@@ -317,6 +319,7 @@ foodbuy_overlap_header_sus = f"""
                     FROM SCDBFP10.PMVHM7PF
 
                     WHERE M7AGRN <> 999999999
+                    AND M7AGRN <> 0 
                     AND M7VAED >= {today}
                 ) AS HEADER
 
@@ -368,8 +371,6 @@ foodbuy_overlap_header_sus = f"""
     ORDER BY
     FBUY_VA,
     DIRECT_VA
-
-    LIMIT 1000
 """
 
 def foodbuy_overlap_item_sus(foodbuy_agreements, direct_agreements):
@@ -663,6 +664,21 @@ cal_backup = (f"""
     DELETE FROM CAL_Account_Assignments_BACKUP WHERE TIMESTAMP < '{last_month}'
     DELETE FROM CAL_Customer_Profile_BACKUP WHERE TIMESTAMP < '{last_month}'
     DELETE FROM CAL_Programs_BACKUP WHERE TIMESTAMP < '{last_month}'
+    DELETE FROM CAL_Deviation_Loads_BACKUP WHERE TIMESTAMP < '{last_month}'
+
+    INSERT INTO CAL_Deviation_Loads_BACKUP 
+
+    SELECT
+    PRIMARY_KEY,
+    CUSTOMER,
+    PROGRAM,
+    OWNER,
+    DATE,
+    SR,
+    GRP,
+    '{timestamp}'
+
+    FROM CAL_Deviation_Loads
 
     INSERT INTO CAL_Programs_BACKUP 
 
@@ -740,3 +756,4 @@ cal_backup = (f"""
 
     COMMIT
 """)
+

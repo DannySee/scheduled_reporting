@@ -121,7 +121,7 @@ expiring_deals = {
     'headers': '', 
     'mail_to': 'rachel.adams@sysco.com',
     'mail_subject': f'Expiring Performance Agreements {dt.pretty("today")}',
-    'mail_body': f"The attached performance agreemenet(s) are set to expire this month."  
+    'mail_body': f"The attached performance agreemenet(s) are set to expire through next month."  
 }
 
 ############################################################################################

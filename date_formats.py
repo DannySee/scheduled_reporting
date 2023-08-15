@@ -16,6 +16,10 @@ def sus(day):
     elif day == 'end_of_month':
         next_month = now.replace(day=28) + timedelta(days=4)
         return (next_month - timedelta(days=next_month.day)).strftime('%Y%m%d')
+    elif day == 'end_of_next_month':
+        start_of_next_month = now.replace(day=1).replace(month=now.month % 12 + 1)
+        end_of_next_month = start_of_next_month + timedelta(days=31)
+        return end_of_next_month.strftime('%Y%m%d')
     else:
         return 'format not supported'
 
@@ -33,6 +37,10 @@ def pretty(day):
     elif day == 'end_of_month':
         next_month = now.replace(day=28) + timedelta(days=4)
         return (next_month - timedelta(days=next_month.day)).strftime("%m-%d-%Y")
+    elif day == 'end_of_next_month':
+        start_of_next_month = now.replace(day=1).replace(month=now.month % 12 + 1)
+        end_of_next_month = start_of_next_month + timedelta(days=31)
+        return end_of_next_month.strftime("%m/%d/%Y")
     elif day == 'month_back':
         return (now - timedelta(30)).strftime("%m/%d/%Y")
     elif day == 'week_back':
