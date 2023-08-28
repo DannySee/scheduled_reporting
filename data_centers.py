@@ -182,8 +182,8 @@ def sus(site):
     cnn_sus = pyodbc.connect(
         driver='{iSeries Access ODBC Driver}',
         system=f'AS{site}ATO.na.sysco.net',
-        UID='PMTAS000',
-        PWD='JULY@GB202',
+        UID='MUDAC000',
+        PWD='ASDFGH9874',
         TRANSLATE=1,
         TRANSLATE_BINARY=True)
 

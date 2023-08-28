@@ -2,6 +2,7 @@ import date_formats as dt
 import server_jobs
 import customer_incentives as ci
 import deviated_agreements as dpm
+import alaska as ak
 
 from data_pull import sus_reporting
 from data_centers import all_sites
@@ -13,7 +14,7 @@ if __name__ == "__main__":
     server_jobs.cal_backup()
 
     # daily reporting
-    report_list = [ci.daily_validation]
+    report_list = [ci.daily_validation, ak.daily_validation]
 
     # weekly reporting
     if dt.now.weekday() == 0:
@@ -27,5 +28,5 @@ if __name__ == "__main__":
     # run reporting accross usbl
     sus_reporting(report_list, all_sites)
 
-    #sus_reporting([dpm.foodbuy_overlaps],all_sites)
+
 
